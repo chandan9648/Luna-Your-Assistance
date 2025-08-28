@@ -10,6 +10,7 @@ import ChatSidebar from '../components/chats/ChatSidebar.jsx';
 import ChatMessages from '../components/chats/ChatMessages.jsx';
 import ChatComposer from '../components/chats/ChatComposer.jsx';
 import '../components/chats/ChatLayout.css';
+import NewChatModal from '../components/chats/NewChatModal.jsx';
 
 import {
   startNewChat,
@@ -31,6 +32,8 @@ const Home = () => {
   const isSending = useSelector((state) => state.chat.isSending);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [newChatOpen, setNewChatOpen] = useState(false);
+  const [creatingChat, setCreatingChat] = useState(false);
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
 
@@ -44,29 +47,29 @@ const Home = () => {
     return t ? { Authorization: `Bearer ${t}` } : {};
   };
 
-  // Create new chat
-  const handleNewChat = async () => {
-    let title = window.prompt('Enter a title for the new chat:', '');
-    if (title) title = title.trim();
-    if (!title) return;
+  // Create new chat (from modal)
+  const handleNewChat = () => setNewChatOpen(true);
 
+  const submitNewChat = async (title) => {
+    setCreatingChat(true);
     try {
       const response = await axios.post(
         'http://localhost:3000/api/chat',
         { title },
         { headers: getAuthHeaders() }
       );
-
-      getMessages(response.data.chat._id);
       dispatch(startNewChat(response.data.chat));
       setSidebarOpen(false);
+      setNewChatOpen(false);
+      setMessages([]);
     } catch (err) {
       console.error('Error creating chat:', err);
       if (err?.response?.status === 401) {
-        // Clear stale token so PublicRoute can show the login page
         localStorage.removeItem('token');
         navigate('/login');
       }
+    } finally {
+      setCreatingChat(false);
     }
   };
 
@@ -226,6 +229,12 @@ const Home = () => {
           <ChatComposer input={input} setInput={(v) => dispatch(setInput(v))} onSend={sendMessage} isSending={isSending} />
         )}
       </main>
+      <NewChatModal
+        open={newChatOpen}
+        onClose={() => setNewChatOpen(false)}
+        onSubmit={submitNewChat}
+        submitting={creatingChat}
+      />
       {sidebarOpen && (
         <button className="sidebar-backdrop" aria-label="Close sidebar" onClick={() => setSidebarOpen(false)} />
       )}
