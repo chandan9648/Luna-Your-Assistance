@@ -18,27 +18,22 @@ function initSocketServer(httpServer) {
     })
 
     io.use(async (socket, next) => {
-
         const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
+        const bearerToken = socket.handshake.auth?.token;
+        const token = bearerToken || cookies.token;
 
-        if (!cookies.token) {
-            next(new Error("Authentication error: No token provided"));
+        if (!token) {
+            return next(new Error("Authentication error: No token provided"));
         }
 
         try {
-
-            const decoded = jwt.verify(cookies.token, process.env.JWT_SECRET);
-
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const user = await userModel.findById(decoded.id);
-
-            socket.user = user
-
-            next()
-
+            socket.user = user;
+            next();
         } catch (err) {
             next(new Error("Authentication error: Invalid token"));
         }
-
     })
 
     io.on("connection", (socket) => {

@@ -5,8 +5,8 @@ const path = require('path');
 
 
 /* Routes */
-const authRoutes = require('./routes/auth.route');
-const chatRoutes = require("./routes/chat.route");
+const authRoutes = require('./routes/auth.routes');
+const chatRoutes = require("./routes/chat.routes");
 
 
 const app = express();
@@ -20,7 +20,6 @@ app.use(cors({
 }))
 app.use(express.json());
 app.use(cookieParser());
-
 // app.use(express.static(path.join(__dirname, '../public')));
 
 

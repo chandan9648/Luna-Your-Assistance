@@ -1,33 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import { io } from "socket.io-client";
+import React, { useEffect, useState, useRef } from 'react';
+import { io } from 'socket.io-client';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 import ChatMobileBar from '../components/chats/ChatMobileBar.jsx';
 import ChatSidebar from '../components/chats/ChatSidebar.jsx';
 import ChatMessages from '../components/chats/ChatMessages.jsx';
 import ChatComposer from '../components/chats/ChatComposer.jsx';
 import '../components/chats/ChatLayout.css';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+
 import {
   startNewChat,
   selectChat,
   setInput,
   sendingStarted,
   sendingFinished,
-  setChats
+  setChats,
 } from '../store/chatSlice.js';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const chats = useSelector(state => state.chat.chats);
-  const activeChatId = useSelector(state => state.chat.activeChatId);
-  const input = useSelector(state => state.chat.input);
-  const isSending = useSelector(state => state.chat.isSending);
+  const navigate = useNavigate();
+
+  const chats = useSelector((state) => state.chat.chats);
+  const activeChatId = useSelector((state) => state.chat.activeChatId);
+  const input = useSelector((state) => state.chat.input);
+  const isSending = useSelector((state) => state.chat.isSending);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
 
-  const activeChat = chats.find(c => c.id === activeChatId) || null;
-  const token = localStorage.getItem("token"); // 👈 get JWT token
+  const activeChatRef = useRef(activeChatId);
+  useEffect(() => {
+    activeChatRef.current = activeChatId;
+  }, [activeChatId]);
+
+  const getAuthHeaders = () => {
+    const t = localStorage.getItem('token');
+    return t ? { Authorization: `Bearer ${t}` } : {};
+  };
 
   // Create new chat
   const handleNewChat = async () => {
@@ -36,57 +49,57 @@ const Home = () => {
     if (!title) return;
 
     try {
-      const response = await axios.post("http://localhost:3000/api/chat",
+      const response = await axios.post(
+        'http://localhost:3000/api/chat',
         { title },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: getAuthHeaders() }
       );
-      
 
       getMessages(response.data.chat._id);
       dispatch(startNewChat(response.data.chat));
       setSidebarOpen(false);
     } catch (err) {
-      console.error("Error creating chat:", err);
+      console.error('Error creating chat:', err);
+      if (err?.response?.status === 401) navigate('/login');
     }
   };
 
   // Load chats + setup socket
   useEffect(() => {
-    if (!token) return; // no token = not logged in
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
 
-    axios.get("http://localhost:3000/api/chat", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(response => {
-        dispatch(setChats(response.data.chats.reverse()));
+    axios
+      .get('http://localhost:3000/api/chat', { headers: getAuthHeaders() })
+      .then((response) => {
+        dispatch(setChats([...(response.data.chats || [])].reverse()));
       })
-      .catch(err => console.error("Error fetching chats:", err));
+      .catch((err) => {
+        console.error('Error fetching chats:', err);
+        if (err?.response?.status === 401) navigate('/login');
+      });
 
-    const tempSocket = io("http://localhost:3000", {
-      auth: { token } // 👈 send JWT in socket auth
+    const tempSocket = io('http://localhost:3000', {
+      auth: { token },
     });
 
-    tempSocket.on("connect_error", (err) => {
-      console.error("Socket connection error:", err.message);
+    tempSocket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err.message);
     });
 
-    tempSocket.on("ai-response", (messagePayload) => {
-      console.log("Received AI response:", messagePayload);
-      setMessages(prevMessages => [...prevMessages, {
-        type: 'ai',
-        content: messagePayload.content
-      }]);
+    tempSocket.on('ai-response', (messagePayload) => {
+      if (messagePayload.chat && messagePayload.chat !== activeChatRef.current)
+        return;
+      setMessages((prev) => [...prev, { type: 'ai', content: messagePayload.content }]);
       dispatch(sendingFinished());
     });
 
     setSocket(tempSocket);
-
-    return () => {
-      tempSocket.disconnect();
-    };
-  }, [token]);
+    return () => tempSocket.disconnect();
+  }, [dispatch, navigate]);
 
   // Send user message
   const sendMessage = async () => {
@@ -95,18 +108,14 @@ const Home = () => {
 
     dispatch(sendingStarted());
 
-    const newMessages = [...messages, {
-      type: 'user',
-      content: trimmed
-    }];
-
+    const newMessages = [...messages, { type: 'user', content: trimmed }];
     setMessages(newMessages);
     dispatch(setInput(''));
 
     if (socket) {
-      socket.emit("ai-message", {
+      socket.emit('ai-message', {
         chat: activeChatId,
-        content: trimmed
+        content: trimmed,
       });
     }
   };
@@ -116,26 +125,24 @@ const Home = () => {
     try {
       const response = await axios.get(
         `http://localhost:3000/api/chat/messages/${chatId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: getAuthHeaders() }
       );
 
-      setMessages(response.data.messages.map(m => ({
-        type: m.role === 'user' ? 'user' : 'ai',
-        content: m.content
-      })));
+      setMessages(
+        response.data.messages.map((m) => ({
+          type: m.role === 'user' ? 'user' : 'ai',
+          content: m.content,
+        }))
+      );
     } catch (err) {
-      console.error("Error fetching messages:", err);
+      console.error('Error fetching messages:', err);
+      if (err?.response?.status === 401) navigate('/login');
     }
   };
 
   return (
     <div className="chat-layout minimal">
-      <ChatMobileBar
-        onToggleSidebar={() => setSidebarOpen(o => !o)}
-        onNewChat={handleNewChat}
-      />
+      <ChatMobileBar onToggleSidebar={() => setSidebarOpen((o) => !o)} onNewChat={handleNewChat} />
       <ChatSidebar
         chats={chats}
         activeChatId={activeChatId}
@@ -151,29 +158,19 @@ const Home = () => {
         {messages.length === 0 && (
           <div className="chat-welcome" aria-hidden="true">
             <div className="chip">Early Preview</div>
-            <h1>Luna! your Assistance</h1>
+            <h1>Luna — your assistant</h1>
             <p>
-              Ask anything. Paste text, brainstorm ideas, or get quick explanations.
-              Your chats stay in the sidebar so you can pick up where you left off.
+              Ask anything. Paste text, brainstorm ideas, or get quick explanations. Your chats stay in the sidebar so you can pick up where you left off.
             </p>
           </div>
         )}
         <ChatMessages messages={messages} isSending={isSending} />
         {activeChatId && (
-          <ChatComposer
-            input={input}
-            setInput={(v) => dispatch(setInput(v))}
-            onSend={sendMessage}
-            isSending={isSending}
-          />
+          <ChatComposer input={input} setInput={(v) => dispatch(setInput(v))} onSend={sendMessage} isSending={isSending} />
         )}
       </main>
       {sidebarOpen && (
-        <button
-          className="sidebar-backdrop"
-          aria-label="Close sidebar"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <button className="sidebar-backdrop" aria-label="Close sidebar" onClick={() => setSidebarOpen(false)} />
       )}
     </div>
   );

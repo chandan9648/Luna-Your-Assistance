@@ -28,21 +28,15 @@ const Register = () => {
         }, {
             withCredentials: true
         }).then((res) => {
-            console.log(res);
+            const token = res?.data?.token;
+            if (token) {
+                localStorage.setItem("token", token);
+            }
             navigate("/");
         }).catch((err) => {
             console.error(err);
             alert('Registration failed (placeholder)');
-        })
-
-        try {
-            // Placeholder: integrate real registration logic / API call.
-
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setSubmitting(false);
-        }
+        }).finally(() => setSubmitting(false))
     }
 
     return (

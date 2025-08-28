@@ -1,4 +1,4 @@
-@import url('./styles/theme.css');
+@import url("./styles/theme.css");
 
 * {
   box-sizing: border-box;
@@ -91,7 +91,8 @@ form.auth-form input {
   border-radius: var(--radius-sm);
   background: var(--color-bg-alt);
   color: var(--color-text);
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  transition: border-color var(--transition-fast),
+    background var(--transition-fast);
 }
 
 form.auth-form input:focus {
@@ -144,7 +145,8 @@ button.primary-btn {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+  transition: background var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 button.primary-btn:hover {
@@ -161,7 +163,7 @@ button.primary-btn:active {
 }
 
 button.primary-btn:disabled {
-  opacity: .6;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -179,12 +181,12 @@ button.primary-btn:disabled {
 
 /* Smooth theme transition */
 html {
-  transition: background-color .3s, color .3s;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 body,
 .auth-card,
 input,
 button {
-  transition: background-color .3s, color .3s, border-color .3s;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
