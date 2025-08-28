@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 import ChatMobileBar from '../components/chats/ChatMobileBar.jsx';
 import ChatSidebar from '../components/chats/ChatSidebar.jsx';
@@ -17,6 +18,7 @@ import {
   sendingStarted,
   sendingFinished,
   setChats,
+  removeChat,
 } from '../store/chatSlice.js';
 
 const Home = () => {
@@ -60,7 +62,11 @@ const Home = () => {
       setSidebarOpen(false);
     } catch (err) {
       console.error('Error creating chat:', err);
-      if (err?.response?.status === 401) navigate('/login');
+      if (err?.response?.status === 401) {
+        // Clear stale token so PublicRoute can show the login page
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     }
   };
 
@@ -79,7 +85,10 @@ const Home = () => {
       })
       .catch((err) => {
         console.error('Error fetching chats:', err);
-        if (err?.response?.status === 401) navigate('/login');
+        if (err?.response?.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }
       });
 
     const tempSocket = io('http://localhost:3000', {
@@ -88,6 +97,11 @@ const Home = () => {
 
     tempSocket.on('connect_error', (err) => {
       console.error('Socket connection error:', err.message);
+      // If auth fails at socket level, clear token and force re-login
+      if (String(err?.message || '').toLowerCase().includes('unauthorized')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     });
 
     tempSocket.on('ai-response', (messagePayload) => {
@@ -136,8 +150,49 @@ const Home = () => {
       );
     } catch (err) {
       console.error('Error fetching messages:', err);
-      if (err?.response?.status === 401) navigate('/login');
+      if (err?.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     }
+  };
+
+  // Delete a chat
+  const handleDeleteChat = async (chatId) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/chat/${chatId}`, { headers: getAuthHeaders() });
+      dispatch(removeChat(chatId));
+      // Clear messages if we deleted the active chat
+      if (activeChatRef.current === chatId) {
+        setMessages([]);
+      }
+      toast.success('Chat deleted');
+    } catch (err) {
+      console.error('Error deleting chat:', err);
+      if (err?.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else {
+        toast.error('Failed to delete chat');
+      }
+    }
+  };
+
+  // Logout handler
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('token');
+    } catch {
+      // ignore
+    }
+    if (socket) {
+      try { socket.disconnect(); } catch {
+        // ignore
+      }
+    }
+    dispatch(setChats([]));
+    setMessages([]);
+    navigate('/login');
   };
 
   return (
@@ -153,6 +208,8 @@ const Home = () => {
         }}
         onNewChat={handleNewChat}
         open={sidebarOpen}
+  onLogout={handleLogout}
+  onDeleteChat={handleDeleteChat}
       />
       <main className="chat-main" role="main">
         {messages.length === 0 && (

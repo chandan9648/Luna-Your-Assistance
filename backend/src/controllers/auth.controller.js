@@ -2,7 +2,7 @@ const userModel = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-
+//REGISTER CONTROLLER
 async function registerUser(req, res) {
 
     const { fullName: { firstName, lastName }, email, password } = req.body;
@@ -27,11 +27,11 @@ async function registerUser(req, res) {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
 
-    // Keep cookie for compatibility (optional for local dev), also return token in body for Authorization header usage
+    
     try {
         res.cookie("token", token);
-    } catch (_) {
-        // ignore cookie set errors in local non-https dev
+    } catch (error) {
+        console.error("Error setting cookie:", error);
     }
 
     res.status(201).json({
@@ -45,6 +45,8 @@ async function registerUser(req, res) {
     })
 }
 
+
+//LOGIN CONTROLLER
 async function loginUser(req, res) {
 
     const { email, password } = req.body;
@@ -66,11 +68,11 @@ async function loginUser(req, res) {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-    // Keep cookie for compatibility (optional for local dev), also return token in body for Authorization header usage
+
     try {
         res.cookie("token", token);
-    } catch (_) {
-        // ignore cookie set errors in local non-https dev
+    } catch (error) {
+        console.error("Error setting cookie:", error);
     }
 
     res.status(200).json({

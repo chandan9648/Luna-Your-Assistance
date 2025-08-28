@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 const Login = () => {
@@ -29,8 +30,11 @@ const Login = () => {
           withCredentials: true,
         }
       )
+
       .then((res) => {
+        toast.success("Login successful");
         const token = res?.data?.token;
+        
         if (token) {
           localStorage.setItem("token", token);
         }
@@ -38,6 +42,7 @@ const Login = () => {
       })
       .catch((err) => {
         console.error(err);
+        toast.error("Login failed");
       })
       .finally(() => {
         setSubmitting(false);

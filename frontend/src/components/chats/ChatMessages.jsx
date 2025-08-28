@@ -11,7 +11,7 @@ const ChatMessages = ({ messages, isSending }) => {
       {messages.map((m, index) => (
         <div key={index} className={`msg msg-${m.type}`}>
           <div className="msg-role" aria-hidden="true">
-            {m.type === "user" ? "You" : "AI"}
+            {m.type === "user" ? "You" : "Luna"}
           </div>
           <div className="msg-bubble">{m.content}</div>
           <div

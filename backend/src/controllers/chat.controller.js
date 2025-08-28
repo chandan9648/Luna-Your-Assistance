@@ -53,8 +53,24 @@ async function getMessages(req, res) {
 
 }
 
+async function deleteChat(req, res) {
+    const user = req.user;
+    const chatId = req.params.id;
+
+    const chat = await chatModel.findOne({ _id: chatId, user: user._id });
+    if (!chat) {
+        return res.status(404).json({ message: 'Chat not found' });
+    }
+
+    await messageModel.deleteMany({ chat: chatId });
+    await chatModel.deleteOne({ _id: chatId });
+
+    res.status(200).json({ message: 'Chat deleted successfully' });
+}
+
 module.exports = {
     createChat,
     getChats,
-    getMessages
+    getMessages,
+    deleteChat
 };

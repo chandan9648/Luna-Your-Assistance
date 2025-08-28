@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Register = () => {
     const [ form, setForm ] = useState({ email: '', firstname: '', lastname: '', password: '' });
@@ -28,6 +29,7 @@ const Register = () => {
         }, {
             withCredentials: true
         }).then((res) => {
+            toast.success('Registration successful');
             const token = res?.data?.token;
             if (token) {
                 localStorage.setItem("token", token);
@@ -35,7 +37,7 @@ const Register = () => {
             navigate("/");
         }).catch((err) => {
             console.error(err);
-            alert('Registration failed (placeholder)');
+            toast.error('Registration failed');
         }).finally(() => setSubmitting(false))
     }
 
