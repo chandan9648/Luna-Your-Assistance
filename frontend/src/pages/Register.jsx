@@ -19,7 +19,7 @@ const Register = () => {
         setSubmitting(true);
         console.log(form);
 
-        axios.post("https://luna-your-assistance-1.onrender.com/api/auth/register", {
+        axios.post("http://localhost:3000/api/auth/register", {
             email: form.email,
             fullName: {
                 firstName: form.firstname,
@@ -34,7 +34,7 @@ const Register = () => {
             if (token) {
                 localStorage.setItem("token", token);
             }
-            navigate("/");
+            navigate("/login");
         }).catch((err) => {
             console.error(err);
             toast.error('Registration failed');
