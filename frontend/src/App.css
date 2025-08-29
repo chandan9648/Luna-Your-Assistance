@@ -196,3 +196,39 @@ button {
   background: #000 !important;
   width: 100%;
 }
+
+/* Gray card styling specifically for auth pages on black bg */
+.auth-page-black .auth-card {
+  background: #111;            /* dark gray card */
+  border-color: #2a2a2a;       /* subtle border */
+  color: #f5f5f5;              /* readable text */
+}
+
+.auth-page-black .auth-header h1 {
+  color: #fafafa;
+}
+
+.auth-page-black .auth-sub,
+.auth-page-black .auth-alt {
+  color: #b5b5b5;
+}
+
+.auth-page-black form.auth-form input {
+  background: #0f0f0f;         /* input gray */
+  border-color: #2a2a2a;
+  color: #ffffff;
+}
+
+.auth-page-black form.auth-form input::placeholder {
+  color: #6a6a6a;
+}
+
+.auth-page-black form.auth-form input:focus {
+  background: #111;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+.auth-page-black .auth-alt a {
+  color: #ffffff;
+}
