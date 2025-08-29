@@ -50,7 +50,7 @@ const Login = () => {
   }
 
   return (
-    <div className="center-min-h-screen">
+    <div className="center-min-h-screen auth-page-black">
       <div className="auth-card" role="main" aria-labelledby="login-heading">
         <header className="auth-header">
           <h1 id="login-heading">Sign in</h1>

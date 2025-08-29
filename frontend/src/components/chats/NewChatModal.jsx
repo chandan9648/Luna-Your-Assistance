@@ -3,11 +3,13 @@ import './NewChatModal.css';
 
 const NewChatModal = ({ open, onClose, onSubmit, submitting = false }) => {
   const [title, setTitle] = useState('');
+  const [message, setMessage] = useState('');
   const inputRef = useRef(null);
 
   useEffect(() => {
     if (open) {
       setTitle('');
+      setMessage('');
       setTimeout(() => inputRef.current?.focus(), 0);
     }
   }, [open]);
@@ -18,7 +20,7 @@ const NewChatModal = ({ open, onClose, onSubmit, submitting = false }) => {
     e.preventDefault();
     const t = title.trim();
     if (!t) return;
-    onSubmit(t);
+    onSubmit({ title: t, message: message.trim() });
   }
 
   return (

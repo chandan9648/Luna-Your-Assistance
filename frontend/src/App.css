@@ -12,7 +12,7 @@ body {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: var(--color-bg);
+  /* background: var(--color-bg); */
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
@@ -189,4 +189,10 @@ body,
 input,
 button {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* Force black background on auth pages */
+.auth-page-black {
+  background: #000 !important;
+  width: 100%;
 }

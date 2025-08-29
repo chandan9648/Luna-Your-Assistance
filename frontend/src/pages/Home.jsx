@@ -50,7 +50,7 @@ const Home = () => {
   // Create new chat (from modal)
   const handleNewChat = () => setNewChatOpen(true);
 
-  const submitNewChat = async (title) => {
+  const submitNewChat = async ({ title, message }) => {
     setCreatingChat(true);
     try {
       const response = await axios.post(
@@ -62,6 +62,21 @@ const Home = () => {
       setSidebarOpen(false);
       setNewChatOpen(false);
       setMessages([]);
+      if (message && message.trim()) {
+        // Prefill the composer with first message and focus it
+        dispatch(setInput(message.trim()));
+        // Small delay to ensure component mounts before focusing
+        setTimeout(() => {
+          const composer = document.querySelector('textarea.composer-input');
+          composer?.focus();
+        }, 0);
+      } else {
+        // Still move focus to composer for convenience
+        setTimeout(() => {
+          const composer = document.querySelector('textarea.composer-input');
+          composer?.focus();
+        }, 0);
+      }
     } catch (err) {
       console.error('Error creating chat:', err);
       if (err?.response?.status === 401) {
