@@ -112,6 +112,28 @@
   transition: transform 0.15s;
 }
 
+/* Mic button matches send button visuals */
+.mic-btn.icon-btn {
+  --size: 40px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #3a3a3c;
+  border: 1px solid #525255;
+  color: #f1f1f2;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+  flex-shrink: 0;
+}
+.mic-btn.icon-btn:hover:not(:disabled) { background: #4a4a4d; }
+.mic-btn.icon-btn:active:not(:disabled) { background: #343436; transform: translateY(1px); }
+.mic-btn.icon-btn:disabled { opacity: 0.35; cursor: default; }
+.mic-btn.icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000; }
+.mic-btn.icon-btn.listening { background: #e11d48; border-color: #e11d48; color: #fff; }
+
 /* Compact adjustments for very narrow screens */
 @media (max-width: 600px) {
   .composer {
@@ -125,6 +147,7 @@
   .send-btn.icon-btn {
     --size: 36px;
   }
+  .mic-btn.icon-btn { --size: 36px; }
 }
 
 @media (max-width: 420px) {
