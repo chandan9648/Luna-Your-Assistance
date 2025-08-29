@@ -3,6 +3,7 @@
     display: flex;
     height: 100dvh;
     background: var(--color-bg);
+    color: var(--color-text);
     font-size: var(--text-base);
 }
 
@@ -34,19 +35,9 @@
     }
 }
 
-/* Minimal monochrome variant (applied when parent has .minimal) */
+/* Minimal variant now uses theme variables */
 .chat-layout.minimal {
-    --color-bg: #000;
-    --color-bg-alt: #0d0d0d;
-    --color-surface: #050505;
-    --color-border: #1e1e1e;
-    --color-text: #f5f5f5;
-    --color-text-muted: #7a7a7a;
-    --color-accent: #fff;
-}
-
-.chat-layout.minimal {
-    background: linear-gradient(180deg, #000 0%, #050505 60%, #050505 100%);
+    background: var(--color-bg);
     color: var(--color-text);
 }
 
@@ -55,71 +46,72 @@
 }
 
 .chat-layout.minimal .chat-mobile-bar {
-    background: #000;
-    border-color: #1e1e1e;
+    background: var(--color-bg);
+    border-color: var(--color-border);
 }
 
 .chat-layout.minimal .chat-icon-btn {
-    background: #0d0d0d;
-    border-color: #1f1f1f;
+    background: var(--color-bg-alt);
+    border-color: var(--color-border);
     color: var(--color-text);
 }
 
 .chat-layout.minimal .chat-icon-btn:hover {
-    background: #141414;
+    filter: brightness(0.98);
 }
 
 .chat-layout.minimal .chat-sidebar {
-    background: #000;
-    border-color: #1e1e1e;
+    background: var(--color-bg);
+    border-color: var(--color-border);
 }
 
 .chat-layout.minimal .sidebar-header {
-    border-color: #1e1e1e;
+    border-color: var(--color-border);
 }
 
 .chat-layout.minimal .small-btn {
-    background: #111;
-    border-color: #2a2a2a;
+    background: var(--color-bg-alt);
+    border-color: var(--color-border);
+    color: var(--color-text);
 }
 
 .chat-layout.minimal .small-btn:hover {
-    background: #181818;
+    filter: brightness(0.98);
 }
 
 .chat-layout.minimal .chat-list-item {
-    background: #0d0d0d;
-    border-color: #1a1a1a;
+    background: var(--color-bg-alt);
+    border-color: var(--color-border);
+    color: var(--color-text);
 }
 
 .chat-layout.minimal .chat-list-item:hover {
-    background: #141414;
+    filter: brightness(0.98);
 }
 
 .chat-layout.minimal .chat-list-item.active {
-    border-color: #fff;
-    box-shadow: 0 0 0 1px #fff;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .chat-layout.minimal .msg-bubble {
-    background: #0d0d0d;
-    border-color: #1e1e1e;
+    background: var(--color-bg-alt);
+    border-color: var(--color-border);
     color: var(--color-text);
 }
 
 .chat-layout.minimal .msg-user .msg-bubble {
-    background: #111;
-    border-color: #2a2a2a;
-    color: #f8f8f8;
+    background: var(--color-surface);
+    border-color: var(--color-border);
 }
 
 .chat-layout.minimal .msg-role {
-    color: #5a5a5a;
+    color: var(--color-text-muted);
 }
 
 .chat-layout.minimal .msg-error .msg-bubble {
-    border-color: #ff4d4d;
-    color: #ff4d4d;
+    border-color: var(--color-danger);
+    color: var(--color-danger);
 }
 
 /* Welcome (empty state) */
@@ -170,14 +162,14 @@
 }
 
 .chat-layout.minimal .messages::-webkit-scrollbar-track {
-    background: #000;
+    background: var(--color-bg);
 }
 
 .chat-layout.minimal .messages::-webkit-scrollbar-thumb {
-    background: #1e1e1e;
+    background: var(--color-border);
     border-radius: 6px;
 }
 
 .chat-layout.minimal .messages::-webkit-scrollbar-thumb:hover {
-    background: #2a2a2a;
+    filter: brightness(0.95);
 }
