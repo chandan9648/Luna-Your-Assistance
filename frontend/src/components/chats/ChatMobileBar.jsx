@@ -1,6 +1,7 @@
 import React from "react";
 import "./ChatMobileBar.css";
 import "./ChatLayout.css";
+import ThemeToggle from "../ThemeToggle";
 
 const ChatMobileBar = ({ onToggleSidebar, onNewChat }) => (
   <header className="chat-mobile-bar">
@@ -12,9 +13,12 @@ const ChatMobileBar = ({ onToggleSidebar, onNewChat }) => (
       ☰
     </button>
     <h1 className="chat-app-title">Chat</h1>
-    <button className="chat-icon-btn" onClick={onNewChat} aria-label="New chat">
-      ＋
-    </button>
+    <div className="chat-right-actions">
+      <ThemeToggle variant="icon" />
+      <button className="chat-icon-btn" onClick={onNewChat} aria-label="New chat">
+        ＋
+      </button>
+    </div>
   </header>
 );
 

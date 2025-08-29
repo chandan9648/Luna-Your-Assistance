@@ -45,6 +45,13 @@
   color: #ffffff;
 }
 
+/* Right side actions (new chat + theme toggle) */
+.chat-right-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 /* Very small widths: reduce horizontal padding to avoid wrapping/overflow */
 @media (max-width: 480px) {
   .chat-mobile-bar {

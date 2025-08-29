@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import ThemeToggle from "../components/ThemeToggle.jsx";
 
 const Register = () => {
     const [ form, setForm ] = useState({ email: '', firstname: '', lastname: '', password: '' });
@@ -43,6 +44,10 @@ const Register = () => {
 
     return (
         <div className="center-min-h-screen auth-page-black">
+            {/* Mobile-only top-right mode toggle */}
+            <div className="auth-mobile-top" aria-hidden="false">
+                <ThemeToggle variant="icon" />
+            </div>
             <div className="auth-card" role="main" aria-labelledby="register-heading">
                 <header className="auth-header">
                     <h1 id="register-heading">Create account</h1>

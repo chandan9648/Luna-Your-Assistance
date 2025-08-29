@@ -257,3 +257,38 @@ button {
   color: #fff;
   border-color: #000;
 }
+
+/* When on mobile widths, theme toggle is shown in navbar; hide floating button */
+@media (max-width: 959px) {
+  .theme-toggle {
+    display: none;
+  }
+}
+
+/* Mobile-only top-right container for theme toggle on auth pages */
+.auth-mobile-top {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 40;
+  display: none; /* hidden by default (desktop) */
+}
+
+.auth-mobile-top .chat-icon-btn {
+  background: #0d0d0d;
+  border: 1px solid #1e1e1e;
+  padding: 8px 14px;
+  border-radius: 20px;
+  color: #d0d0d0;
+}
+
+.auth-mobile-top .chat-icon-btn:hover {
+  background: #181818;
+  color: #ffffff;
+}
+
+@media (max-width: 959px) {
+  .auth-mobile-top {
+    display: block;
+  }
+}
