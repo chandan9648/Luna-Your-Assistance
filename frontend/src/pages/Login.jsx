@@ -18,7 +18,7 @@ const Login = () => {
     e.preventDefault();
     setSubmitting(true);
 
-    console.log(form);
+    console.log(form)
 
     axios
       .post(
