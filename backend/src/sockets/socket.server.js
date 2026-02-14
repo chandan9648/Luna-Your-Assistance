@@ -38,8 +38,7 @@ function initSocketServer(httpServer) {
 
     io.on("connection", (socket) => {
         socket.on("ai-message", async (messagePayload) => {
-            /* messagePayload = { chat:chatId, content: message text } */
-            // 1) Persist user message and compute embedding in parallel (embedding may be slow)
+            
             const createMsgPromise = messageModel.create({
                 chat: messagePayload.chat,
                 user: socket.user._id,
@@ -48,7 +47,7 @@ function initSocketServer(httpServer) {
             });
             const vectors = await aiService.generateVector(messagePayload.content).catch(() => null);
 
-            // 2) Fetch recent messages and (optionally) memory in parallel; add timeout to memory query
+            
             const historyPromise = messageModel
                 .find({ chat: messagePayload.chat })
                 .sort({ createdAt: -1 })
@@ -79,7 +78,7 @@ function initSocketServer(httpServer) {
                 createMsgPromise,
             ]);
 
-            // 3) Build short-term + long-term memory context
+           
             const stm = chatHistory.map((item) => ({
                 role: item.role,
                 parts: [{ text: item.content }],
@@ -103,19 +102,18 @@ function initSocketServer(httpServer) {
                   ]
                 : [];
 
-            // 4) Generate AI response (fast path)
+            
             const response = await aiService.generateResponse([...ltm, ...stm]);
 
-            // 5) Send to client immediately
             socket.emit("ai-response", {
                 content: response,
                 chat: messagePayload.chat,
             });
 
-            // 6) Background persistence and memory updates (non-blocking)
+           
             const persist = async () => {
                 try {
-                    // Upsert user message memory (if vectors exist)
+                   
                     if (vectors && savedMessage?._id) {
                         await createMemory({
                             vectors,
@@ -128,7 +126,7 @@ function initSocketServer(httpServer) {
                         });
                     }
 
-                    // Save AI response and embed/upsert
+                    
                     const responseMessage = await messageModel.create({
                         chat: messagePayload.chat,
                         user: socket.user._id,
