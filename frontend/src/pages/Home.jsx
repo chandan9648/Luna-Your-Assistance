@@ -54,7 +54,7 @@ const Home = () => {
     setCreatingChat(true);
     try {
       const response = await axios.post(
-        'https://luna-your-assistance-1.onrender.com/api/chat',
+        'https://luna-your-assistance-8ga7.onrender.com/api/chat',
         { title },
         { headers: getAuthHeaders() }
       );
@@ -97,7 +97,7 @@ const Home = () => {
     }
 
     axios
-      .get('https://luna-your-assistance-1.onrender.com/api/chat', { headers: getAuthHeaders() })
+      .get('https://luna-your-assistance-8ga7.onrender.com/api/chat', { headers: getAuthHeaders() })
       .then((response) => {
         dispatch(setChats([...(response.data.chats || [])].reverse()));
       })
@@ -109,7 +109,7 @@ const Home = () => {
         }
       });
 
-    const tempSocket = io('https://luna-your-assistance-1.onrender.com', {
+    const tempSocket = io('https://luna-your-assistance-8ga7.onrender.com', {
       auth: { token },
     });
 
@@ -156,7 +156,7 @@ const Home = () => {
   const getMessages = async (chatId) => {
     try {
       const response = await axios.get(
-        `https://luna-your-assistance-1.onrender.com/api/chat/messages/${chatId}`,
+        `https://luna-your-assistance-8ga7.onrender.com/api/chat/messages/${chatId}`,
         { headers: getAuthHeaders() }
       );
 
@@ -178,7 +178,7 @@ const Home = () => {
   // Delete a chat
   const handleDeleteChat = async (chatId) => {
     try {
-      await axios.delete(`https://luna-your-assistance-1.onrender.com/api/chat/${chatId}`, { headers: getAuthHeaders() });
+      await axios.delete(`https://luna-your-assistance-8ga7.onrender.com/api/chat/${chatId}`, { headers: getAuthHeaders() });
       dispatch(removeChat(chatId));
       // Clear messages if we deleted the active chat
       if (activeChatRef.current === chatId) {

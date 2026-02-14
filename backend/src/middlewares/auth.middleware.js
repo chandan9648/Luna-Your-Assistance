@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 async function authUser(req, res, next) {
 
-    // Support either cookie token or Authorization: Bearer <token>
+    
     let token = req.cookies?.token;
     const authHeader = req.headers?.authorization || req.headers?.Authorization;
     if (!token && authHeader && authHeader.startsWith('Bearer ')) {
