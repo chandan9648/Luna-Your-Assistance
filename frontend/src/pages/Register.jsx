@@ -35,7 +35,7 @@ const Register = () => {
             if (token) {
                 localStorage.setItem("token", token);
             }
-            navigate("/login");
+            navigate("/");
         }).catch((err) => {
             console.error(err);
             toast.error('Registration failed');
