@@ -15,7 +15,7 @@ const app = express();
 
 /* Using Middlewares */
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://luna-virtual-assistance.vercel.app'],
     credentials: true
 }))
 app.use(express.json());
